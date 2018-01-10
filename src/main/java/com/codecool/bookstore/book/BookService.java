@@ -8,8 +8,6 @@ public interface BookService {
 
     void save(Book book);
 
-//    void update(Integer id, Integer authorId, Book book);
-
     void update(Integer id, Book book) throws IllegalAccessException;
 
     void delete(Integer id);

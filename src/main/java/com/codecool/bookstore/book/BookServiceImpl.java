@@ -11,10 +11,14 @@ public class BookServiceImpl implements BookService {
 
     private BookRepository repository;
     private AuthorRepository authorRepository;
+    private BookServiceHelper bookServiceHelper;
 
-    public BookServiceImpl(BookRepository repository, AuthorRepository authorRepository) {
+    public BookServiceImpl(BookRepository repository,
+                           AuthorRepository authorRepository,
+                           BookServiceHelper bookServiceHelper) {
         this.repository = repository;
         this.authorRepository = authorRepository;
+        this.bookServiceHelper = bookServiceHelper;
     }
 
     @Override
@@ -29,28 +33,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void save(Book book) {
-        Author givenAuthor = book.getAuthor();
-        Author author = authorRepository.findAuthorByFirstName( givenAuthor.getFirstName());
-
-        if (author != null) {
-            book.setAuthor( author );
-        }
-        this.repository.save(book);
+        Book updatedBook = bookServiceHelper.setAuthorIfAlreadyExists(book);
+        this.repository.save(updatedBook);
     }
-
-//    @Override
-//    public void update(Integer id, Integer authorId, Book book) {
-//        book.setId(id);
-//        Author author = authorRepository.findOne(authorId);
-//        book.setAuthor( author );
-//        repository.save(book);
-//    }
 
     @Override
     public void update(Integer id, Book book) throws IllegalAccessException {
         book.setId(id);
-        Book bookValidatedForAuthorExistence = validateIfAuthorExists( book );
-        Book bookValidatedForAllFieldsExistence = checkIfAnyFieldIsNull( bookValidatedForAuthorExistence );
+        Book bookValidatedForAuthorExistence =
+                bookServiceHelper.validateIfAuthorExists( book );
+        Book bookValidatedForAllFieldsExistence =
+                bookServiceHelper.checkIfAnyFieldIsNull( bookValidatedForAuthorExistence );
 
         repository.save(bookValidatedForAllFieldsExistence);
     }
@@ -58,29 +51,5 @@ public class BookServiceImpl implements BookService {
     @Override
     public void delete(Integer id) {
         this.repository.delete(id);
-    }
-
-    private Book validateIfAuthorExists(Book book) {
-        Author givenAuthor = book.getAuthor();
-        Author author = authorRepository.findAuthorByFirstName(givenAuthor.getFirstName());
-
-        if (author != null) {
-            book.setAuthor( author );
-            return book;
-        } else {
-            throw new IllegalArgumentException( );
-        }
-    }
-
-    private Book checkIfAnyFieldIsNull(Book book) throws IllegalAccessException {
-        Field[] fields = book.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible( true );
-            if (field.get(book) == null ) {
-                throw new IllegalArgumentException( );
-            }
-        }
-        return book;
     }
 }

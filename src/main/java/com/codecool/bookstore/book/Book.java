@@ -25,6 +25,8 @@ public class Book {
     @NotNull
     private Integer published;
 
+    private boolean archived;
+
     public Book() { }
 
     public Book(String title, Author author, String genre, Integer published) {
