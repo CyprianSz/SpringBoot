@@ -49,15 +49,30 @@ public class BookServiceImpl implements BookService {
     @Override
     public void update(Integer id, Book book) throws IllegalAccessException {
         book.setId(id);
+        Book bookValidatedForAuthorExistence = validateIfAuthorExists( book );
+        Book bookValidatedForAllFieldsExistence = checkIfAnyFieldIsNull( bookValidatedForAuthorExistence );
 
+        repository.save(bookValidatedForAllFieldsExistence);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        this.repository.delete(id);
+    }
+
+    private Book validateIfAuthorExists(Book book) {
         Author givenAuthor = book.getAuthor();
         Author author = authorRepository.findAuthorByFirstName(givenAuthor.getFirstName());
+
         if (author != null) {
             book.setAuthor( author );
+            return book;
         } else {
             throw new IllegalArgumentException( );
         }
+    }
 
+    private Book checkIfAnyFieldIsNull(Book book) throws IllegalAccessException {
         Field[] fields = book.getClass().getDeclaredFields();
 
         for (Field field : fields) {
@@ -66,11 +81,6 @@ public class BookServiceImpl implements BookService {
                 throw new IllegalArgumentException( );
             }
         }
-        repository.save(book);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        this.repository.delete(id);
+        return book;
     }
 }
