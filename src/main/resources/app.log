@@ -1,1 +1,12 @@
-2018-01-11 14:42:17 INFO  LogServiceImpl:42 - DUPADUPA
+2018-01-11 16:06:32 ERROR LogServiceImpl:56 - NullPointerException thrown
+2018-01-11 16:09:31 INFO  LogServiceImpl:30 - books list returned
+2018-01-11 16:10:15 INFO  LogServiceImpl:43 - findOne method called
+2018-01-11 16:10:28 INFO  LogServiceImpl:54 - book created
+2018-01-11 16:10:38 INFO  LogServiceImpl:30 - books list returned
+2018-01-11 16:11:31 INFO  LogServiceImpl:68 - book updated
+2018-01-11 16:11:36 INFO  LogServiceImpl:30 - books list returned
+2018-01-11 16:11:58 INFO  LogServiceImpl:86 - book deleted
+2018-01-11 16:12:13 INFO  LogServiceImpl:30 - books list returned
+2018-01-11 16:12:44 INFO  LogServiceImpl:86 - book deleted
+2018-01-11 16:15:14 INFO  LogServiceImpl:25 - authors list returned
+2018-01-11 16:15:21 INFO  LogServiceImpl:82 - author deleted

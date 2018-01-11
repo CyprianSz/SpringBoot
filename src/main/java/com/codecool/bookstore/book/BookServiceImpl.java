@@ -13,7 +13,6 @@ public class BookServiceImpl implements BookService {
     private BookServiceHelper bookServiceHelper;
     private Logger logger;
 
-
     public BookServiceImpl(BookRepository repository,
                            BookServiceHelper bookServiceHelper,
                            LogService logService) {
@@ -28,6 +27,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public Iterable<Book> findActive() {
+        logger.info("books list returned");
         return this.repository.findAllByArchivedIsFalse();
     }
 
@@ -39,9 +39,8 @@ public class BookServiceImpl implements BookService {
     public Book findOne(Integer id) {
         Book book = this.repository.findBookByIdAndArchivedIsFalse(id);
 
-        logger.info("DUPADUPA");
-
         if (book != null) {
+            logger.info("book returned");
             return book;
         } else {
             throw new IllegalArgumentException(  );
@@ -52,6 +51,7 @@ public class BookServiceImpl implements BookService {
     public void save(Book book) {
         Book updatedBook = bookServiceHelper.setAuthorIfAlreadyExists(book);
         this.repository.save(updatedBook);
+        logger.info("book created");
     }
 
     @Override
@@ -65,6 +65,7 @@ public class BookServiceImpl implements BookService {
                 bookServiceHelper.checkIfAnyFieldIsNull( bookValidatedForAuthorExistence );
 
         repository.save(bookValidatedForAllFieldsExistence);
+        logger.info("book updated");
     }
 
     @Override
@@ -82,5 +83,6 @@ public class BookServiceImpl implements BookService {
             book.setArchived( true );
             repository.save(book);
         }
+        logger.info("book deleted");
     }
 }

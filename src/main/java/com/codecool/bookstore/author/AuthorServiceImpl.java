@@ -1,6 +1,7 @@
 package com.codecool.bookstore.author;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import com.codecool.bookstore.logger.LogService;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -8,9 +9,11 @@ import java.util.Objects;
 @Service
 public class AuthorServiceImpl implements AuthorService {
     private AuthorRepository repository;
+    private Logger logger;
 
-    public AuthorServiceImpl(AuthorRepository repository) {
+    public AuthorServiceImpl(AuthorRepository repository, LogService logService) {
         this.repository = repository;
+        this.logger = logService.getLogger();
     }
 
     @Override
@@ -19,6 +22,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     public Iterable<Author> findActive() {
+        logger.info("authors list returned");
         return this.repository.findAllByArchivedIsFalse();
     }
 
@@ -32,6 +36,7 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = this.repository.findAuthorByIdAndArchivedIsFalse(id);
 
         if (author != null) {
+            logger.info("author returned");
             return author;
         } else {
             throw new IllegalArgumentException(  );
@@ -46,12 +51,14 @@ public class AuthorServiceImpl implements AuthorService {
             throw new IllegalAccessException();
         } else {
             repository.save(author);
+            logger.info("author updated");
         }
     }
 
     @Override
     public void save(Author book) {
         this.repository.save(book);
+        logger.info("author created");
     }
 
     @Override
@@ -72,5 +79,6 @@ public class AuthorServiceImpl implements AuthorService {
             author.setArchived( true );
             repository.save(author);
         }
+        logger.info("author deleted");
     }
 }
