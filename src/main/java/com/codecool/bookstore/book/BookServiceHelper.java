@@ -10,9 +10,16 @@ import java.lang.reflect.Field;
 public class BookServiceHelper {
 
     private AuthorRepository authorRepository;
+    private BookRepository bookRepository;
 
-    public BookServiceHelper(AuthorRepository authorRepository) {
+    public BookServiceHelper(AuthorRepository authorRepository,
+                             BookRepository bookRepository) {
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
+    }
+
+    public BookRepository getBookRepository() {
+        return bookRepository;
     }
 
     public AuthorRepository getAuthorRepository() {
@@ -56,5 +63,19 @@ public class BookServiceHelper {
             }
         }
         return book;
+    }
+
+    void checkIfBookNotArchived(Book book) throws IllegalAccessException {
+        if (book.isArchived()) {
+            throw new IllegalAccessException();
+        }
+    }
+
+    Book searchForSameAlreadyArchived(Book book) {
+        String title = book.getTitle();
+        String genre = book.getGenre();
+        Integer published = book.getPublished();
+
+        return bookRepository.findBookByTitleAndGenreAndPublishedAndArchivedIsTrue( title, genre, published );
     }
 }

@@ -1,24 +1,25 @@
 package com.codecool.bookstore.book;
 
-import com.codecool.bookstore.author.Author;
-import com.codecool.bookstore.author.AuthorRepository;
+import com.codecool.bookstore.logger.LogService;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
+import java.util.Objects;
 
 @Service
 public class BookServiceImpl implements BookService {
 
     private BookRepository repository;
-    private AuthorRepository authorRepository;
     private BookServiceHelper bookServiceHelper;
+    private Logger logger;
+
 
     public BookServiceImpl(BookRepository repository,
-                           AuthorRepository authorRepository,
-                           BookServiceHelper bookServiceHelper) {
+                           BookServiceHelper bookServiceHelper,
+                           LogService logService) {
         this.repository = repository;
-        this.authorRepository = authorRepository;
         this.bookServiceHelper = bookServiceHelper;
+        this.logger = logService.getLogger();
     }
 
     @Override
@@ -26,9 +27,25 @@ public class BookServiceImpl implements BookService {
         return this.repository.findAll();
     }
 
+    public Iterable<Book> findActive() {
+        return this.repository.findAllByArchivedIsFalse();
+    }
+
+    public Iterable<Book> findArchived() {
+        return this.repository.findAllByArchivedIsTrue();
+    }
+
     @Override
     public Book findOne(Integer id) {
-        return this.repository.findOne(id);
+        Book book = this.repository.findBookByIdAndArchivedIsFalse(id);
+
+        logger.info("DUPADUPA");
+
+        if (book != null) {
+            return book;
+        } else {
+            throw new IllegalArgumentException(  );
+        }
     }
 
     @Override
@@ -40,6 +57,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public void update(Integer id, Book book) throws IllegalAccessException {
         book.setId(id);
+        bookServiceHelper.checkIfBookNotArchived(book);
+
         Book bookValidatedForAuthorExistence =
                 bookServiceHelper.validateIfAuthorExists( book );
         Book bookValidatedForAllFieldsExistence =
@@ -51,5 +70,17 @@ public class BookServiceImpl implements BookService {
     @Override
     public void delete(Integer id) {
         this.repository.delete(id);
+    }
+
+    public void archive(Integer id) {
+        Book book = repository.findOne( id );
+        Book foundedBook = bookServiceHelper.searchForSameAlreadyArchived(book);
+
+        if ((foundedBook != null) && (!Objects.equals( foundedBook.getId(), id ))) {
+            repository.delete( id );
+        } else {
+            book.setArchived( true );
+            repository.save(book);
+        }
     }
 }

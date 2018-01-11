@@ -1,12 +1,13 @@
 package com.codecool.bookstore.book;
 
 import com.codecool.bookstore.author.Author;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames={"title", "genre", "published"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames={"title", "genre", "published", "archived"}))
 public class Book {
 
     @Id
@@ -25,16 +26,11 @@ public class Book {
     @NotNull
     private Integer published;
 
+    @NotNull
+    @JsonIgnore
     private boolean archived;
 
     public Book() { }
-
-    public Book(String title, Author author, String genre, Integer published) {
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-        this.published = published;
-    }
 
     public Integer getId() {
         return id;
@@ -74,5 +70,13 @@ public class Book {
 
     public void setPublished(Integer published) {
         this.published = published;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }

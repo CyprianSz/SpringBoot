@@ -19,8 +19,18 @@ public class AuthorController {
     }
 
     @GetMapping(path = "")
+    public Iterable<Author> showActive() {
+        return this.service.findActive();
+    }
+
+    @GetMapping(path = "/all")
     public Iterable<Author> index() {
         return this.service.findAll();
+    }
+
+    @GetMapping(path = "/archived")
+    public Iterable<Author> showArchived() {
+        return this.service.findArchived();
     }
 
     @GetMapping(path = "/{id}")
@@ -29,12 +39,13 @@ public class AuthorController {
     }
 
     @PutMapping(path = "/{id}")
-    public void update(@PathVariable Integer id, @RequestBody Author author) {
+    public Author update(@PathVariable Integer id, @RequestBody Author author) throws IllegalAccessException {
         service.update(id, author);
+        return author;
     }
 
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable Integer id) {
-        this.service.delete(id);
+    public void archive(@PathVariable Integer id) {
+        this.service.archive(id);
     }
 }
