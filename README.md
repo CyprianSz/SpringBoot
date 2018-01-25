@@ -1,3 +1,3 @@
-#Simple REST API with resource archivization
+# Simple REST API with resource archivization
 
-####Uses: Spring Boot, Spring Context, Hibernate, PostgreSQL, log4j
+#### Uses: Spring Boot, Spring Context, Hibernate, PostgreSQL, log4j
